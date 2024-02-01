@@ -102,7 +102,8 @@ excel_file = st.file_uploader("Upload Excel File", type=["xlsx"])
 if excel_file:
     excel_data = pd.read_excel(excel_file)
 else:
-    excel_data = pd.read_excel("C:/Users/ASUS/Downloads/SalesProj/DATABASE.xlsx")  # Default path
+    st.warning('Please Upload Your Database File', icon="⚠️")
+    #excel_data = pd.read_excel("C:/Users/ASUS/Downloads/SalesProj/DATABASE.xlsx")  # Default path
 
 # Select template folder
 selected_folder_path = st.text_input("Enter Template Folder Path", "path/to/templates")
