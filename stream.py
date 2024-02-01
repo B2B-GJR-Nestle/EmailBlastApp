@@ -6,18 +6,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
-import tkinter as tk
-from tkinter import filedialog
-tk.use('Agg')
-filedialog.use('Agg')
 import tempfile
-
-# Set up tkinter
-root = tk.Tk()
-root.withdraw()
-
-# Make folder picker dialog appear on top of other windows
-root.wm_attributes('-topmost', 1)
 
 def generate_document(template_path, output_path, data):
     doc = DocxTemplate(template_path)
@@ -109,15 +98,8 @@ if excel_file:
 else:
     excel_path = "C:/Users/ASUS/Downloads/SalesProj/DATABASE.xlsx"  # Default path
 
-# Select template folder Lama
-#template_folder = st.text_input("Enter Template Folder Path", "path/to/templates")
-# Select Template Folder
-selected_folder_path = st.session_state.get("folder_path", None)
-folder_select_button = st.button("Select Folder")
-if folder_select_button:
-    dirname = filedialog.askdirectory(master=root)
-    selected_folder_path = st.text_input('Selected folder:', dirname)
-    st.session_state.folder_path = selected_folder_path
+# Select template folder
+selected_folder_path = st.text_input("Enter Template Folder Path", "path/to/templates")
 
 # Execute Mail Merge Button
 if st.button("Execute Mail Merge"):
