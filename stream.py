@@ -40,7 +40,8 @@ def update_excel_status(df, email, status):
     return df
 
 def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_folder, output_update_function):
-    output_directory = 'output_emails\\'
+    output_directoryy = 'output_emails/'
+    output_directory = output_directoryy.replace("/", "\\")
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
@@ -61,6 +62,7 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_folde
         # Determine the template based on the extracted product
         template_filename = f"Proposal_{product}.docx"
         template_path = os.path.join(template_folder, template_filename.replace("/", "\\"))
+        print(template_path)
         #template_path = os.path.join(template_folder, template_filename)
 
         output_filename = f"{output_directory}Proposal_{row['Company Name']}.docx"
