@@ -60,7 +60,8 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_folde
 
         # Determine the template based on the extracted product
         template_filename = f"Proposal_{product}.docx"
-        template_path = os.path.join(template_folder, template_filename)
+        template_path = os.path.join(template_folder, template_filename.replace("/", "\\"))
+        #template_path = os.path.join(template_folder, template_filename)
 
         output_filename = f"{output_directory}Proposal_{row['Company Name']}.docx"
         subject = f"Proposal Penawaran Kerjasama PT Nestle Indonesia & {row['Company Name']}"
