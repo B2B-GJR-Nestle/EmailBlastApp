@@ -32,15 +32,21 @@ def send_email(subject, body, to_address, attachment_path, gmail_user, gmail_pas
     with smtplib.SMTP('smtp.gmail.com', 587) as server:
         server.starttls()
         server.login(gmail_user, gmail_password)
-        output_update_function(f"Sent to {msg['To']}")
+        #output_update_function(f"Sent to {msg['To']}")
         server.sendmail(gmail_user, to_address, msg.as_string())
 
-def merge_and_send_emails(excel_path, gmail_user, gmail_password, template_folder, output_update_function):
-    excel_data = pd.read_excel(excel_path)
-    
+def update_excel_status(df, email, status):
+    df.loc[df['Email'] == email, 'STATUS'] = status
+    return df
+
+def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_folder, output_update_function):
     output_directory = 'output_emails/'
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
+
+    # Display the initial table after uploading the Excel file
+    placeholder = st.empty()
+    placeholder.dataframe(excel_data)
 
     for index, row in excel_data.iterrows():
         merge_data = {
@@ -81,12 +87,12 @@ B2B Executive Greater Jakarta Region - Nestle Indonesia
 
         # Send the email with the Word document as an attachment
         send_email(subject, body_text, row['Email'], output_filename, gmail_user, gmail_password, output_update_function)
-
-def execute_merge_and_send(excel_path, template_folder, output_text):
-    gmail_user = "b2b.gjr.nestle@gmail.com"  # Replace with your Gmail email address
-    gmail_password = "alks kzuv wczc efch"  # Replace with your Gmail password 
-
-    merge_and_send_emails(excel_path, gmail_user, gmail_password, template_folder, lambda msg: st.write(msg))
+        
+        # Update Excel status to 'Sent' and update the DataFrame
+        excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
+        
+        # Display the updated DataFrame after each row
+        placeholder.dataframe(excel_data)
 
 # Streamlit app
 st.title("📑Mail Merge Application")
@@ -94,13 +100,13 @@ st.title("📑Mail Merge Application")
 # Upload Excel file
 excel_file = st.file_uploader("Upload Excel File", type=["xlsx"])
 if excel_file:
-    excel_path = pd.ExcelFile(excel_file)
+    excel_data = pd.read_excel(excel_file)
 else:
-    excel_path = "C:/Users/ASUS/Downloads/SalesProj/DATABASE.xlsx"  # Default path
+    excel_data = pd.read_excel("C:/Users/ASUS/Downloads/SalesProj/DATABASE.xlsx")  # Default path
 
 # Select template folder
 selected_folder_path = st.text_input("Enter Template Folder Path", "path/to/templates")
 
 # Execute Mail Merge Button
 if st.button("Execute Mail Merge"):
-    execute_merge_and_send(excel_path, selected_folder_path, st.empty())  # Use st.empty() as a placeholder for output
+    merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", selected_folder_path, st.empty())
