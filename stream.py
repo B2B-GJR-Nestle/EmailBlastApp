@@ -40,7 +40,7 @@ def update_excel_status(df, email, status):
     return df
 
 def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_folder, output_update_function):
-    output_directory = 'output_emails/'
+    output_directory = 'output_emails\\'
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
