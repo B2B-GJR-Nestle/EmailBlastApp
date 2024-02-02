@@ -37,14 +37,23 @@ def main():
     if uploaded_file is not None:
         data = load_data(uploaded_file)
 
-        st.subheader('Data Preview:')
-        st.write(data.head())
+        if data is not None:
+            st.subheader('Data Preview:')
+            st.write(data.head())
 
-        st.subheader('Visualization 1: Pie Chart of STATUS')
-        pie_chart(data)
+            # Create two columns for side-by-side visualizations
+            col1, col2 = st.beta_columns(2)
 
-        st.subheader('Visualization 2: Product Histogram')
-        product_histogram(data)
+            with col1:
+                st.subheader('Visualization 1: Pie Chart of STATUS')
+                pie_chart(data, 'STATUS', 'Pie Chart of STATUS')
+
+            with col2:
+                st.subheader('Visualization 2: Pie Chart of Performance')
+                pie_chart(data, 'Performance', 'Pie Chart of Performance')
+
+            st.subheader('Visualization 3: Product Histogram')
+            product_histogram(data)
 
 if __name__ == "__main__":
     main()
