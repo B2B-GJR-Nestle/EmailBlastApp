@@ -4,3 +4,4 @@ secure-smtplib
 tk
 openpyxl
 pydrive
+plotly
