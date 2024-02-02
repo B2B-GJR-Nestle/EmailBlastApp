@@ -2,12 +2,23 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
+img = Image.open('Nestle_Logo.png')
+st.set_page_config(page_title='B2B Email Blast App',page_icon=img)
+st.title("📈B2B GJR Email Blast Analysis Tool")
+hide_st = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            <style>
+            """
+st.markdown(hide_st, unsafe_allow_html=True)
+
 def load_data(file):
     try:
         if file.name.endswith('.csv'):
             data = pd.read_csv(file, encoding='utf-8')
         elif file.name.endswith(('.xls', '.xlsx')):
-            data = pd.read_excel(file)
+            data = pd.read_excel(file, encoding='utf-8')
         else:
             st.error("Unsupported file format. Please upload a CSV or Excel file.")
             return None
@@ -19,7 +30,6 @@ def load_data(file):
     except Exception as e:
         st.error(f"Error reading the file: {e}")
         return None
-
 
 def pie_chart(data, column, title):
     fig = px.pie(data, names=column, title=title)
@@ -41,18 +51,13 @@ def main():
             st.subheader('Data Preview:')
             st.write(data.head())
 
-            # Create two columns for side-by-side visualizations
-            col1, col2 = st.columns(2)
+            st.subheader('📨Sent Rate')
+            pie_chart(data, 'STATUS', 'Pie Chart of STATUS')
 
-            with col1:
-                st.subheader('Visualization 1: Pie Chart of STATUS')
-                pie_chart(data, 'STATUS', 'Pie Chart of STATUS')
+            st.subheader('📥Performance (Email Replied)')
+            pie_chart(data, 'Performance', 'Pie Chart of Performance')
 
-            with col2:
-                st.subheader('Visualization 2: Pie Chart of Performance')
-                pie_chart(data, 'Performance', 'Pie Chart of Performance')
-
-            st.subheader('Visualization 3: Product Histogram')
+            st.subheader('📊Top Product Category by Proposal Sent')
             product_histogram(data)
 
 if __name__ == "__main__":
