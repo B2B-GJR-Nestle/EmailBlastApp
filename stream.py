@@ -86,7 +86,7 @@ hide_st = """
             """
 st.markdown(hide_st, unsafe_allow_html=True)
 img = Image.open('Nestle_Logo.png')
-st.beta_set_page_config(page_title='B2B Email Blast App',page_icon=img)
+st.set_page_config(page_title='B2B Email Blast App',page_icon=img)
 # Upload Excel or CSV file
 excel_file = st.file_uploader("Upload Excel/CSV File", type=["xlsx", "csv"])
 if excel_file:
