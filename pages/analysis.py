@@ -4,11 +4,22 @@ import plotly.express as px
 
 def load_data(file):
     try:
-        data = pd.read_csv(file, encoding='utf-8')  # Specify the encoding used in your CSV file
+        if file.name.endswith('.csv'):
+            data = pd.read_csv(file, encoding='utf-8')
+        elif file.name.endswith(('.xls', '.xlsx')):
+            data = pd.read_excel(file, encoding='utf-8')
+        else:
+            st.error("Unsupported file format. Please upload a CSV or Excel file.")
+            return None
+
         return data
     except UnicodeDecodeError:
         st.error("Unable to decode the file with UTF-8 encoding. Please try a different encoding.")
         return None
+    except Exception as e:
+        st.error(f"Error reading the file: {e}")
+        return None
+
 
 def pie_chart(data):
     fig = px.pie(data, names='STATUS', title='Pie Chart of STATUS')
