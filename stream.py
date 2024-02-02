@@ -97,7 +97,7 @@ products = ["BearBrand", "Nescafe", "Milo"]
 for product in products:
     if product == "BearBrand":    
         st.write(f"## 🥛{product}")
-    else if product == "Nescafe":    
+    elif product == "Nescafe":    
         st.write(f"## ☕ {product}")
     else:
         st.write(f"## 🍫 {product}")
