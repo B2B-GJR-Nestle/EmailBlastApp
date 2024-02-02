@@ -21,8 +21,8 @@ def load_data(file):
         return None
 
 
-def pie_chart(data):
-    fig = px.pie(data, names='STATUS', title='Pie Chart of STATUS')
+def pie_chart(data, column, title):
+    fig = px.pie(data, names=column, title=title)
     st.plotly_chart(fig)
 
 def product_histogram(data):
