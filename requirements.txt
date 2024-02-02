@@ -5,3 +5,4 @@ tk
 openpyxl
 pydrive
 plotly
+plotly-express
