@@ -10,6 +10,18 @@ from email.mime.application import MIMEApplication
 import tempfile
 from PIL import Image
 
+st.title("📑B2B GJR Email Blast Application")
+hide_st = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            <style>
+            """
+st.markdown(hide_st, unsafe_allow_html=True)
+img = Image.open('Nestle_Logo.png')
+st.set_page_config(page_title='B2B Email Blast App',page_icon=img)
+
+
 def generate_document(template, output_path, data):
     doc = DocxTemplate(template)
     doc.render(data)
@@ -77,16 +89,6 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_dict,
             placeholder.dataframe(excel_data)
 
 # Streamlit app
-st.title("📑B2B GJR Email Blast Application")
-hide_st = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            <style>
-            """
-st.markdown(hide_st, unsafe_allow_html=True)
-img = Image.open('Nestle_Logo.png')
-st.set_page_config(page_title='B2B Email Blast App',page_icon=img)
 # Upload Excel or CSV file
 excel_file = st.file_uploader("Upload Excel/CSV File", type=["xlsx", "csv"])
 if excel_file:
