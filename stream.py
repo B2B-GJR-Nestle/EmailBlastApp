@@ -10,6 +10,8 @@ from email.mime.application import MIMEApplication
 import tempfile
 from PIL import Image
 
+img = Image.open('Nestle_Logo.png')
+st.set_page_config(page_title='B2B Email Blast App',page_icon=img)
 st.title("📑B2B GJR Email Blast Application")
 hide_st = """
             <style>
@@ -18,8 +20,6 @@ hide_st = """
             <style>
             """
 st.markdown(hide_st, unsafe_allow_html=True)
-img = Image.open('Nestle_Logo.png')
-st.set_page_config(page_title='B2B Email Blast App',page_icon=img)
 
 
 def generate_document(template, output_path, data):
