@@ -80,10 +80,14 @@ HAI
 
 # Streamlit app
 st.title("📑Mail Merge Application")
-
-excel_file = st.file_uploader("Upload Excel File", type=["xlsx"])
+# Upload Excel or CSV file
+excel_file = st.file_uploader("Upload Excel/CSV File", type=["xlsx", "csv"])
 if excel_file:
-    excel_data = pd.read_excel(excel_file)
+    # Use pandas to read either Excel or CSV based on file extension
+    if excel_file.name.endswith('.xlsx'):
+        excel_data = pd.read_excel(excel_file)
+    elif excel_file.name.endswith('.csv'):
+        excel_data = pd.read_csv(excel_file)
 else:
     st.warning('Please Upload Your Database File', icon="⚠️")
     #excel_data = pd.read_excel("C:/Users/ASUS/Downloads/SalesProj/DATABASE.xlsx")  # Default path
