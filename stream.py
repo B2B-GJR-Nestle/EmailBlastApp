@@ -96,11 +96,11 @@ products = ["BearBrand", "Nescafe", "Milo"]
 
 for product in products:
     if product == "BearBrand":    
-        st.write(f"##🥛{product} Template")
+        st.write(f"## 🥛{product} Template")
     if product == "Nescafe":    
-        st.write(f"##☕ {product} Template")
+        st.write(f"## ☕ {product} Template")
     else:
-        st.write(f"##🍫 {product} Template")
+        st.write(f"## 🍫 {product} Template")
     template_path = st.file_uploader(f"Upload {product} Template", type=["docx"])
     
     if template_path:
