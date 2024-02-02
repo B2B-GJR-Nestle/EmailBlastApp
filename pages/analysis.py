@@ -2,8 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-img = Image.open('Nestle_Logo.png')
-st.set_page_config(page_title='B2B Email Blast App',page_icon=img)
+st.set_page_config(page_title='B2B Email Blast App',page_icon="📊")
 st.title("📈B2B GJR Email Blast Analysis Tool")
 hide_st = """
             <style>
