@@ -69,22 +69,7 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_dict,
             generate_document(template, output_filename, merge_data)
 
             # Use the provided body_text or a default if none is provided
-            email_body = body_text or """
-Salam,
-
-Semoga Bapak/Ibu keadaan baik. Saya mewakili tim Nestlé Indonesia dan dengan senang hati ingin berbicara tentang peluang kerjasama program feeding karyawan yang dapat memberikan nilai tambah bagi perusahaan Anda.
-
-Sebagai salah satu perusahaan makanan dan minuman yang memiliki komitmen tinggi terhadap kualitas dan kesejahteraan, kami ingin menjalin kolaborasi dengan perusahaan Anda. Keunggulan kerjasama ini meliputi kontinuitas pasokan produk kami yang andal, serta diskon khusus sebagai bentuk apresiasi atas kerjasama yang baik.
-
-Untuk informasi lebih lanjut seputar produk listing dan harga, Anda dapat menemukannya dalam dokumen yang saya lampirkan. Kami sangat terbuka untuk berdiskusi lebih lanjut atau menjawab pertanyaan yang mungkin Anda miliki.
-
-Terima kasih banyak untuk waktu dan perhatiannya. Kami berharap dapat menjalin kerjasama yang baik dan saling menguntungkan.
-
-Salam,
-
-Bimo
-B2B Executive Greater Jakarta Region - Nestle Indonesia
-"""
+            email_body = body_text
             send_email(subject, email_body, row['Email'], output_filename, gmail_user, gmail_password, output_update_function)
 
             excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
@@ -120,7 +105,23 @@ for product in products:
             template_dict[product] = temp_template.name
 
 # Input for email body text
-body_text = st.text_area("Enter Email Body Text", default="")
+default = """
+Salam,
+
+Semoga Bapak/Ibu keadaan baik. Saya mewakili tim Nestlé Indonesia dan dengan senang hati ingin berbicara tentang peluang kerjasama program feeding karyawan yang dapat memberikan nilai tambah bagi perusahaan Anda.
+
+Sebagai salah satu perusahaan makanan dan minuman yang memiliki komitmen tinggi terhadap kualitas dan kesejahteraan, kami ingin menjalin kolaborasi dengan perusahaan Anda. Keunggulan kerjasama ini meliputi kontinuitas pasokan produk kami yang andal, serta diskon khusus sebagai bentuk apresiasi atas kerjasama yang baik.
+
+Untuk informasi lebih lanjut seputar produk listing dan harga, Anda dapat menemukannya dalam dokumen yang saya lampirkan. Kami sangat terbuka untuk berdiskusi lebih lanjut atau menjawab pertanyaan yang mungkin Anda miliki.
+
+Terima kasih banyak untuk waktu dan perhatiannya. Kami berharap dapat menjalin kerjasama yang baik dan saling menguntungkan.
+
+Salam,
+
+Bimo
+B2B Executive Greater Jakarta Region - Nestle Indonesia
+"""
+body_text = st.text_area("Enter Email Body Text", default)
 
 if st.button("Execute Mail Merge"):
     merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_dict, body_text, st.empty())
