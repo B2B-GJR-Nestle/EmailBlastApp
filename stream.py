@@ -76,7 +76,7 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_dict,
             placeholder.dataframe(excel_data)
 
 # Streamlit app
-st.title("📑Mail Merge Application")
+st.title("📑B2B GJR Email Blast Application")
 # Upload Excel or CSV file
 excel_file = st.file_uploader("Upload Excel/CSV File", type=["xlsx", "csv"])
 if excel_file:
