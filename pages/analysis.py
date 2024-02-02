@@ -54,7 +54,7 @@ def main():
             pie_chart(data, 'STATUS', 'Pie Chart of STATUS')
 
             st.subheader('📥Performance (Email Replied)')
-            pie_chart(data, 'Performance', 'Pie Chart of Performance')
+            pie_chart(data, 'Replied', 'Pie Chart of Performance')
 
             st.subheader('📊Top Product Category by Proposal Sent')
             product_histogram(data)
