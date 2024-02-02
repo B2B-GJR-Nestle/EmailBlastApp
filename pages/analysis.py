@@ -15,9 +15,9 @@ st.markdown(hide_st, unsafe_allow_html=True)
 def load_data(file):
     try:
         if file.name.endswith('.csv'):
-            data = pd.read_csv(file, encoding='utf-8')
+            data = pd.read_csv(file)
         elif file.name.endswith(('.xls', '.xlsx')):
-            data = pd.read_excel(file, encoding='utf-8')
+            data = pd.read_excel(file)
         else:
             st.error("Unsupported file format. Please upload a CSV or Excel file.")
             return None
