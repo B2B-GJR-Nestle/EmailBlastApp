@@ -67,6 +67,10 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_dict,
     placeholder.dataframe(excel_data)
 
     for index, row in excel_data.iterrows():
+        # Skip rows where the 'Email' column is empty
+        if pd.isnull(row['Email']):
+            continue
+        
         merge_data = {
             'RecipientName': row['CP'],
             'Salutation': row['Salutation'],
