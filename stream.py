@@ -10,17 +10,11 @@ from email.mime.application import MIMEApplication
 import tempfile
 from PIL import Image
 
-img = Image.open('Nestle_Logo.png')
-st.set_page_config(page_title='B2B Email Blast App', page_icon=img)
-st.title("📑B2B GJR Email Blast Application")
-hide_st = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            <style>
-            """
-st.markdown(hide_st, unsafe_allow_html=True)
-
+class SessionState:
+    def __init__(self, **kwargs):
+        self.session = st.report_thread.get_report_ctx().session_id
+        for key, val in kwargs.items():
+            setattr(self, key, val)
 
 def generate_document(template, output_path, data):
     doc = DocxTemplate(template)
@@ -98,18 +92,27 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path,
         excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
         placeholder.dataframe(excel_data)
 
+# Initialize SessionState
+session_state = SessionState(excel_data=None, template_dict={}, template_path=None)
+
 # Streamlit app
+st.title("📑B2B GJR Email Blast Application")
+
+hide_st = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_st, unsafe_allow_html=True)
+
 # Upload Excel or CSV file
 excel_file = st.file_uploader("Upload Excel/CSV File", type=["xlsx", "csv"])
 if excel_file:
-    # Use pandas to read either Excel or CSV based on file extension
     if excel_file.name.endswith('.xlsx'):
-        excel_data = pd.read_excel(excel_file)
+        session_state.excel_data = pd.read_excel(excel_file)
     elif excel_file.name.endswith('.csv'):
-        excel_data = pd.read_csv(excel_file)
-else:
-    st.warning('Please Upload Your Database File', icon="⚠️")
-    #excel_data = pd.read_excel("C:/Users/ASUS/Downloads/SalesProj/DATABASE.xlsx")  # Default path
+        session_state.excel_data = pd.read_csv(excel_file)
 
 # Select feature: Proposal or Promotion
 st.write(f"## Blast Features")
@@ -120,11 +123,12 @@ template_path = None
 if feature == "Promotion":
     st.write(f"## 🎁 Promotional File")
     template_path = st.file_uploader("Upload Promotion Template", type=["png", "jpg", "jpeg", "pdf", "docx"])
+    session_state.template_path = template_path
 
 # Upload Word document templates for Proposal feature
-template_dict = {}
-products = ["BearBrand", "Nescafe", "Milo"]
 if feature == "Proposal":
+    session_state.template_dict = {}
+    products = ["BearBrand", "Nescafe", "Milo"]
     for product in products:
         if product == "BearBrand":    
             st.write(f"## 🥛{product}")
@@ -138,7 +142,7 @@ if feature == "Proposal":
             # Save the uploaded template to a temporary file
             with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as temp_template:
                 temp_template.write(template_path.read())
-                template_dict[product] = temp_template.name
+                session_state.template_dict[product] = temp_template.name
 
 # Input for email body text
 default = """Salam,
@@ -161,4 +165,4 @@ Mail : Bimoagung27@gmail.com
 body_text = st.text_area("Enter Email Body Text", default)
 
 if st.button("Execute Mail Merge"):
-    merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_path, body_text, st.empty(), feature)
+    merge_and_send_emails(session_state.excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", session_state.template_path, body_text, st.empty(), feature)
