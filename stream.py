@@ -119,7 +119,7 @@ feature = st.selectbox("Select Feature", ["Proposal", "Promotion"])
 template_path = None
 if feature == "Promotion":
     st.write(f"## 🎁 Promotional File")
-    template_path = st.file_uploader("Upload Promotion Template", type=["docx"])
+    template_path = st.file_uploader("Upload Promotion Template", type=["png", "jpg", "jpeg", "pdf", "docx"])
 
 # Upload Word document templates for Proposal feature
 template_dict = {}
