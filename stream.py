@@ -84,7 +84,7 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path,
         subject = subject_text.format(company_name=row['Company Name'])
         email_body = body_text.format(CompanyName=row['Company Name'])
         # Check if the template is in PDF format
-        if template_path.lower().endswith('.pdf'):
+        if template_path.type == "application/pdf":
             output_filename = f"{output_directory} Program Feeding {row['Company Name']}.pdf"
             with open(template_path, 'rb') as f:
                 pdf_content = f.read()
