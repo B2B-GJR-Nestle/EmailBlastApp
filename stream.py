@@ -136,7 +136,7 @@ subject_text = st.text_input("Enter Email Subject", default_subject)
 
 # Input for email body text
 default_body = """Yth. Bapak/Ibu
-{company_name}
+{CompanyName}
 di Tempat
 
 Semoga Bapak/Ibu keadaan baik. Saya mewakili tim PT. Nestlé Indonesia dengan senang hati ingin berbicara tentang peluang kerjasama program feeding karyawan yang dapat memberikan nilai tambah bagi perusahaan Anda.
