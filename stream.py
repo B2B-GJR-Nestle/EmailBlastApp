@@ -12,9 +12,7 @@ from PIL import Image
 
 class SessionState:
     def __init__(self, **kwargs):
-        self.session = st.report_thread.get_report_ctx().session_id
-        for key, val in kwargs.items():
-            setattr(self, key, val)
+        self.__dict__.update(kwargs)
 
 def generate_document(template, output_path, data):
     doc = DocxTemplate(template)
