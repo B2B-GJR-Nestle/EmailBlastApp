@@ -55,6 +55,40 @@ def update_excel_status(df, email, status):
     df.loc[df['Email'] == email, 'STATUS'] = status
     return df
 
+def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path, body_text, subject_text, output_update_function, feature):
+    output_directory = 'Promotion'
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
+    placeholder = st.empty()
+    placeholder.dataframe(excel_data)
+    for index, row in excel_data.iterrows():
+        # Skip rows where the 'Email' column is empty
+        if pd.isnull(row['Email']):
+            continue
+        
+        merge_data = {
+            'RecipientName': row['CP'],
+            'Salutation': row['Salutation'],
+            'CompanyName': row['Company Name'],
+        }
+        if feature == "Promotion":
+            template = template_path
+        else:
+            product = row['Product']
+            if product in template_dict:
+                template = template_dict[product]
+            else:
+                st.error(f"No template found for product: {product}")
+                continue
+        output_filename = f"{output_directory} Program Feeding {row['Company Name']}.docx"
+        subject = subject_text.format(company_name=row['Company Name'])
+        generate_document(template, output_filename, merge_data)
+        # Use the provided body_text or a default if none is provided
+        email_body = body_text.format(CompanyName=row['Company Name'])
+        send_email(subject, email_body, row['Email'], output_filename, gmail_user, gmail_password, output_update_function)
+        excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
+        placeholder.dataframe(excel_data)
+
 # Streamlit app
 # Upload Excel or CSV file
 excel_file = st.file_uploader("Upload Excel/CSV File", type=["xlsx", "csv"])
@@ -106,10 +140,15 @@ default_body = """Yth. Bapak/Ibu
 di Tempat
 
 Semoga Bapak/Ibu keadaan baik. Saya mewakili tim PT. Nestlé Indonesia dengan senang hati ingin berbicara tentang peluang kerjasama program feeding karyawan yang dapat memberikan nilai tambah bagi perusahaan Anda.
+
 Sebagai salah satu perusahaan makanan dan minuman yang memiliki komitmen tinggi terhadap kualitas dan kesejahteraan, kami ingin menjalin kolaborasi dengan perusahaan Anda. Keunggulan kerjasama ini meliputi kontinuitas pasokan produk kami yang andal, serta diskon khusus sebagai bentuk apresiasi atas kerjasama yang baik.
+
 Untuk informasi lebih lanjut seputar produk listing dan harga, Anda dapat menemukannya dalam dokumen yang saya lampirkan. Kami sangat terbuka untuk berdiskusi lebih lanjut atau menjawab pertanyaan yang mungkin Anda miliki.
+
 Terima kasih banyak untuk waktu dan perhatiannya. Kami berharap dapat menjalin kerjasama yang baik dan saling menguntungkan.
+
 Salam,
+
 Bimo Agung Laksono
 B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia
 Phone: +6287776162577
@@ -118,43 +157,4 @@ Mail : Bimoagung27@gmail.com"""
 body_text = st.text_area("Enter Email Body Text", default_body, height=300)
 
 if st.button("Execute Mail Merge"):
-    output_directory = 'Promotion'
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
-    placeholder = st.empty()
-    placeholder.dataframe(excel_data)
-    for index, row in excel_data.iterrows():
-        # Skip rows where the 'Email' column is empty
-        if pd.isnull(row['Email']):
-            continue
-        
-        merge_data = {
-            'RecipientName': row['CP'],
-            'Salutation': row['Salutation'],
-            'CompanyName': row['Company Name'],
-        }
-        if feature == "Promotion":
-            template = template_path
-        else:
-            product = row['Product']
-            if product in template_dict:
-                template = template_dict[product]
-            else:
-                st.error(f"No template found for product: {product}")
-                continue
-        
-        subject = subject_text.format(company_name=row['Company Name'])
-        email_body = body_text.format(CompanyName=row['Company Name'])
-        output_filename = f"{output_directory}/Program_Feeding_{row['Company Name']}"
-        # Check if the template is in PDF format
-        if template_path.type == "application/pdf":
-            output_filename += ".pdf"
-            with open(output_filename, 'wb') as f:
-                f.write(template_path.read())
-        else:
-            output_filename += ".docx"
-            generate_document(template, output_filename, merge_data)
-            send_email(subject, email_body, row['Email'], output_filename, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", st.empty())
-
-        excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
-        placeholder.dataframe(excel_data)
+    merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_path, body_text, subject_text, st.empty(), feature)
