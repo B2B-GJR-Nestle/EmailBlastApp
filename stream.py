@@ -58,8 +58,8 @@ def update_excel_status(df, email, status):
     df.loc[df['Email'] == email, 'STATUS'] = status
     return df
 
-def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_dict, body_text, output_update_function, feature):
-    output_directory = 'Proposal Kerja Sama' if feature == "Proposal" else 'Promotion'
+def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path, body_text, output_update_function, feature):
+    output_directory = 'Promotion'
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
@@ -77,20 +77,26 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_dict,
             'CompanyName': row['Company Name'],
         }
 
-        product = row['Product']
+        if feature == "Promotion":
+            template = template_path
+        else:
+            product = row['Product']
+            if product in template_dict:
+                template = template_dict[product]
+            else:
+                st.error(f"No template found for product: {product}")
+                continue
 
-        if product in template_dict:
-            template = template_dict[product]
-            output_filename = f"{output_directory} Program Feeding {row['Company Name']}.docx"
-            subject = f"Proposal Penawaran Kerjasama PT Nestle Indonesia & {row['Company Name']} ({product})"
-            generate_document(template, output_filename, merge_data)
+        output_filename = f"{output_directory} Program Feeding {row['Company Name']}.docx"
+        subject = f"Proposal Penawaran Kerjasama PT Nestle Indonesia & {row['Company Name']} ({product})"
+        generate_document(template, output_filename, merge_data)
 
-            # Use the provided body_text or a default if none is provided
-            email_body = body_text
-            send_email(subject, email_body, row['Email'], output_filename, gmail_user, gmail_password, output_update_function)
+        # Use the provided body_text or a default if none is provided
+        email_body = body_text
+        send_email(subject, email_body, row['Email'], output_filename, gmail_user, gmail_password, output_update_function)
 
-            excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
-            placeholder.dataframe(excel_data)
+        excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
+        placeholder.dataframe(excel_data)
 
 # Streamlit app
 # Upload Excel or CSV file
@@ -105,27 +111,32 @@ else:
     st.warning('Please Upload Your Database File', icon="⚠️")
     #excel_data = pd.read_excel("C:/Users/ASUS/Downloads/SalesProj/DATABASE.xlsx")  # Default path
 
-# Upload Word document templates
-template_dict = {}
-products = ["BearBrand", "Nescafe", "Milo"]
-
-for product in products:
-    if product == "BearBrand":    
-        st.write(f"## 🥛{product}")
-    elif product == "Nescafe":    
-        st.write(f"## ☕ {product}")
-    else:
-        st.write(f"## 🍫 {product}")
-    template_path = st.file_uploader(f"Upload {product} Template", type=["docx"])
-    
-    if template_path:
-        # Save the uploaded template to a temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as temp_template:
-            temp_template.write(template_path.read())
-            template_dict[product] = temp_template.name
-
 # Select feature: Proposal or Promotion
 feature = st.selectbox("Select Feature", ["Proposal", "Promotion"])
+
+# Upload Word document template
+template_path = None
+if feature == "Promotion":
+    template_path = st.file_uploader("Upload Promotion Template", type=["docx"])
+
+# Upload Word document templates for Proposal feature
+template_dict = {}
+products = ["BearBrand", "Nescafe", "Milo"]
+if feature == "Proposal":
+    for product in products:
+        if product == "BearBrand":    
+            st.write(f"## 🥛{product}")
+        elif product == "Nescafe":    
+            st.write(f"## ☕ {product}")
+        else:
+            st.write(f"## 🍫 {product}")
+        template_path = st.file_uploader(f"Upload {product} Template", type=["docx"])
+
+        if template_path:
+            # Save the uploaded template to a temporary file
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as temp_template:
+                temp_template.write(template_path.read())
+                template_dict[product] = temp_template.name
 
 # Input for email body text
 default = """Salam,
@@ -148,4 +159,4 @@ Mail : Bimoagung27@gmail.com
 body_text = st.text_area("Enter Email Body Text", default)
 
 if st.button("Execute Mail Merge"):
-    merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_dict, body_text, st.empty(), feature)
+    merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_path, body_text, st.empty(), feature)
