@@ -9,7 +9,9 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 import tempfile
 from PIL import Image
-from docx2pdf import convert
+
+from py3o.renderserver.client import RenderServerClient
+import base64
 
 img = Image.open('Nestle_Logo.png')
 st.set_page_config(page_title='B2B Email Blast App', page_icon=img)
@@ -23,10 +25,12 @@ hide_st = """
             """
 st.markdown(hide_st, unsafe_allow_html=True)
 
+
 def generate_document(template, output_path, data):
     doc = DocxTemplate(template)
     doc.render(data)
     doc.save(output_path)
+
 
 def send_email(subject, body, to_address, attachment_path, gmail_user, gmail_password):
     msg = MIMEMultipart()
@@ -43,11 +47,22 @@ def send_email(subject, body, to_address, attachment_path, gmail_user, gmail_pas
         server.login(gmail_user, gmail_password)
         server.sendmail(gmail_user, to_address, msg.as_string())
 
+
 def update_excel_status(df, email, status):
     df.loc[df['Email'] == email, 'STATUS'] = status
     return df
 
-def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path, body_text, feature):
+
+def convert_to_pdf(input_path, output_path):
+    client = RenderServerClient()
+    with open(input_path, "rb") as f:
+        content = base64.b64encode(f.read()).decode("utf-8")
+    pdf_content = client.render_template(content, "docx", "pdf")
+    with open(output_path, "wb") as f:
+        f.write(base64.b64decode(pdf_content))
+
+
+def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path, body_text, feature, subject_email):
     output_directory = 'Promotion'
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -57,13 +72,12 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path,
         # Skip rows where the 'Email' column is empty
         if pd.isnull(row['Email']):
             continue
-        
+
         merge_data = {
             'RecipientName': row['CP'],
             'Salutation': row['Salutation'],
             'CompanyName': row['Company Name'],
         }
-        
         if feature == "Promotion":
             template = template_path
         else:
@@ -73,19 +87,18 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path,
             else:
                 st.error(f"No template found for product: {product}")
                 continue
-
         output_filename_docx = f"{output_directory} Program Feeding {row['Company Name']}.docx"
         output_filename_pdf = f"{output_directory} Program Feeding {row['Company Name']}.pdf"
         generate_document(template, output_filename_docx, merge_data)
-        convert(output_filename_docx, output_filename_pdf)  # Convert to PDF
+        convert_to_pdf(output_filename_docx, output_filename_pdf)  # Convert to PDF
 
         # Use the provided body_text or a default if none is provided
-        subject = f"Proposal Penawaran Kerjasama PT Nestle Indonesia & {row['Company Name']} ({product})"
+        email_subject = subject_email if subject_email else f"Proposal Penawaran Kerjasama PT Nestle Indonesia & {row['Company Name']}"
         email_body = body_text
-        send_email(subject, email_body, row['Email'], output_filename_pdf, gmail_user, gmail_password)
-
+        send_email(email_subject, email_body, row['Email'], output_filename_pdf, gmail_user, gmail_password)
         excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
         placeholder.dataframe(excel_data)
+
 
 # Streamlit app
 # Upload Excel or CSV file
@@ -98,7 +111,7 @@ if excel_file:
         excel_data = pd.read_csv(excel_file)
 else:
     st.warning('Please Upload Your Database File', icon="⚠️")
-    #excel_data = pd.read_excel("C:/Users/ASUS/Downloads/SalesProj/DATABASE.xlsx")  # Default path
+    # excel_data = pd.read_excel("C:/Users/ASUS/Downloads/SalesProj/DATABASE.xlsx")  # Default path
 
 # Select feature: Proposal or Promotion
 st.write(f"## Blast Features")
@@ -115,9 +128,9 @@ template_dict = {}
 products = ["BearBrand", "Nescafe", "Milo"]
 if feature == "Proposal":
     for product in products:
-        if product == "BearBrand":    
+        if product == "BearBrand":
             st.write(f"## 🥛{product}")
-        elif product == "Nescafe":    
+        elif product == "Nescafe":
             st.write(f"## ☕ {product}")
         else:
             st.write(f"## 🍫 {product}")
@@ -130,7 +143,7 @@ if feature == "Proposal":
                 template_dict[product] = temp_template.name
 
 # Input for email body text
-default = """Salam,
+default_body_text = """Salam,
 Semoga Bapak/Ibu keadaan baik. Saya mewakili tim PT. Nestlé Indonesia dengan senang hati ingin berbicara tentang peluang kerjasama program feeding karyawan yang dapat memberikan nilai tambah bagi perusahaan Anda.
 Sebagai salah satu perusahaan makanan dan minuman yang memiliki komitmen tinggi terhadap kualitas dan kesejahteraan, kami ingin menjalin kolaborasi dengan perusahaan Anda. Keunggulan kerjasama ini meliputi kontinuitas pasokan produk kami yang andal, serta diskon khusus sebagai bentuk apresiasi atas kerjasama yang baik.
 Untuk informasi lebih lanjut seputar produk listing dan harga, Anda dapat menemukannya dalam dokumen yang saya lampirkan. Kami sangat terbuka untuk berdiskusi lebih lanjut atau menjawab pertanyaan yang mungkin Anda miliki.
@@ -141,7 +154,10 @@ B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia
 Phone: +6287776162577
 Mail : Bimoagung27@gmail.com
 """
-body_text = st.text_area("Enter Email Body Text", default)
+
+body_text = st.text_area("Enter Email Body Text", default_body_text)
+
+subject_email = st.text_input("Enter Email Subject", f"Proposal Penawaran Kerjasama PT Nestle Indonesia & {excel_data.iloc[0]['Company Name']}" if excel_file else "")
 
 if st.button("Execute Mail Merge"):
-    merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_path, body_text, feature)
+    merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_path, body_text, feature, subject_email)
