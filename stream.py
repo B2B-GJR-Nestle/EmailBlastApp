@@ -2,14 +2,13 @@ import streamlit as st
 import pandas as pd
 import os
 import requests
+from docxtpl import DocxTemplate
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 import tempfile
 from PIL import Image
-
-from docxtpl import DocxTemplate
 
 img = Image.open('Nestle_Logo.png')
 st.set_page_config(page_title='B2B Email Blast App', page_icon=img)
@@ -56,48 +55,6 @@ def update_excel_status(df, email, status):
     df.loc[df['Email'] == email, 'STATUS'] = status
     return df
 
-def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path, body_text, subject_text, output_update_function, feature):
-    output_directory = 'Promotion'
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
-    placeholder = st.empty()
-    placeholder.dataframe(excel_data)
-    for index, row in excel_data.iterrows():
-        # Skip rows where the 'Email' column is empty
-        if pd.isnull(row['Email']):
-            continue
-        
-        merge_data = {
-            'RecipientName': row['CP'],
-            'Salutation': row['Salutation'],
-            'CompanyName': row['Company Name'],
-        }
-        if feature == "Promotion":
-            template = template_path
-        else:
-            product = row['Product']
-            if product in template_dict:
-                template = template_dict[product]
-            else:
-                st.error(f"No template found for product: {product}")
-                continue
-        
-        output_filename = f"{output_directory}/Program_Feeding_{row['Company Name']}"
-        if isinstance(template, str):  # Check if the template is a file path
-            output_filename += ".docx"
-            subject = subject_text.format(company_name=row['Company Name'])
-            generate_document(template, output_filename, merge_data)
-        else:  # If the template is a PDF file
-            output_filename += ".pdf"
-            with open(output_filename, 'wb') as f:
-                f.write(template.read())
-            subject = subject_text.format(company_name=row['Company Name'])
-        
-        email_body = body_text.format(CompanyName=row['Company Name'])
-        send_email(subject, email_body, row['Email'], output_filename, gmail_user, gmail_password, output_update_function)
-        excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
-        placeholder.dataframe(excel_data)
-
 # Streamlit app
 # Upload Excel or CSV file
 excel_file = st.file_uploader("Upload Excel/CSV File", type=["xlsx", "csv"])
@@ -134,13 +91,10 @@ if feature == "Proposal":
             st.write(f"## 🍫 {product}")
         template_path = st.file_uploader(f"Upload {product} Template", type=["docx","pdf"])
         if template_path:
-            if template_path.type == "application/pdf":
-                template_dict[product] = template_path
-            else:
-                # Save the uploaded template to a temporary file
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as temp_template:
-                    temp_template.write(template_path.read())
-                    template_dict[product] = temp_template.name
+            # Save the uploaded template to a temporary file
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as temp_template:
+                temp_template.write(template_path.read())
+                template_dict[product] = temp_template.name
 
 # Input for email subject text
 default_subject = "Proposal Penawaran Kerjasama PT Nestle Indonesia & {company_name}"
@@ -164,4 +118,43 @@ Mail : Bimoagung27@gmail.com"""
 body_text = st.text_area("Enter Email Body Text", default_body, height=300)
 
 if st.button("Execute Mail Merge"):
-    merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_path, body_text, subject_text, st.empty(), feature)
+    output_directory = 'Promotion'
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
+    placeholder = st.empty()
+    placeholder.dataframe(excel_data)
+    for index, row in excel_data.iterrows():
+        # Skip rows where the 'Email' column is empty
+        if pd.isnull(row['Email']):
+            continue
+        
+        merge_data = {
+            'RecipientName': row['CP'],
+            'Salutation': row['Salutation'],
+            'CompanyName': row['Company Name'],
+        }
+        if feature == "Promotion":
+            template = template_path
+        else:
+            product = row['Product']
+            if product in template_dict:
+                template = template_dict[product]
+            else:
+                st.error(f"No template found for product: {product}")
+                continue
+        
+        subject = subject_text.format(company_name=row['Company Name'])
+        email_body = body_text.format(CompanyName=row['Company Name'])
+        output_filename = f"{output_directory}/Program_Feeding_{row['Company Name']}"
+        # Check if the template is in PDF format
+        if template_path.type == "application/pdf":
+            output_filename += ".pdf"
+            with open(output_filename, 'wb') as f:
+                f.write(template_path.read())
+        else:
+            output_filename += ".docx"
+            generate_document(template, output_filename, merge_data)
+            send_email(subject, email_body, row['Email'], output_filename, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", st.empty())
+
+        excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
+        placeholder.dataframe(excel_data)
