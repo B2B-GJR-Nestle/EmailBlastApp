@@ -84,19 +84,15 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path,
         subject = subject_text.format(company_name=row['Company Name'])
         email_body = body_text.format(CompanyName=row['Company Name'])
         # Check if the template is in PDF format
+        output_filename = f"{output_directory}/Program_Feeding_{row['Company Name']}.pdf"  # Adjusted filename format
         if template_path.type == "application/pdf":
-            output_filename = f"{output_directory} Program Feeding {row['Company Name']}.pdf"
             with open(output_filename, 'wb') as f:
-                f.write(template_path.read())
+                f.write(template_path.read())  # Write the uploaded PDF content directly to the output file
         else:
-            temp_template_path = tempfile.NamedTemporaryFile(delete=False, suffix=".docx")
-            temp_template_path.write(template_path.read())
-            output_filename = temp_template_path.name
-            generate_document(output_filename, output_filename, merge_data)
-        
-        send_email(subject, email_body, row['Email'], output_filename, gmail_user, gmail_password, output_update_function)
-        excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
-        placeholder.dataframe(excel_data)
+            generate_document(template, output_filename, merge_data)
+            send_email(subject, email_body, row['Email'], output_filename, gmail_user, gmail_password, output_update_function)
+            excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
+            placeholder.dataframe(excel_data)
 
 # Streamlit app
 # Upload Excel or CSV file
