@@ -112,11 +112,13 @@ else:
     #excel_data = pd.read_excel("C:/Users/ASUS/Downloads/SalesProj/DATABASE.xlsx")  # Default path
 
 # Select feature: Proposal or Promotion
+st.write(f"## Blast Features")
 feature = st.selectbox("Select Feature", ["Proposal", "Promotion"])
 
 # Upload Word document template
 template_path = None
 if feature == "Promotion":
+    st.write(f"## 🎁 Promotional File")
     template_path = st.file_uploader("Upload Promotion Template", type=["docx"])
 
 # Upload Word document templates for Proposal feature
