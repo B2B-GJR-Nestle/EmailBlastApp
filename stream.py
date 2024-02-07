@@ -101,8 +101,7 @@ else:
     st.warning('Please Upload Your Database File', icon="⚠️")
     #excel_data = pd.read_excel("C:/Users/ASUS/Downloads/SalesProj/DATABASE.xlsx")  # Default path
 
-github_repo_url = st.text_input("Enter GitHub Repository URL", "https://github.com/B2B-GJR-Nestle/EmailBlastApp")
-
+# Upload Word document templates
 template_dict = {}
 products = ["BearBrand", "Nescafe", "Milo"]
 
@@ -116,9 +115,9 @@ for product in products:
     template_path = st.file_uploader(f"Upload {product} Template", type=["docx"])
     
     if template_path:
-        template_content = template_path.read()
+        # Save the uploaded template to a temporary file
         with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as temp_template:
-            temp_template.write(template_content)
+            temp_template.write(template_path.read())
             template_dict[product] = temp_template.name
 
 # Input for email body text
