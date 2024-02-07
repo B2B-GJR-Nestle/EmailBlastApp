@@ -11,7 +11,7 @@ import tempfile
 from PIL import Image
 
 img = Image.open('Nestle_Logo.png')
-st.set_page_config(page_title='B2B Email Blast App',page_icon=img)
+st.set_page_config(page_title='B2B Email Blast App', page_icon=img)
 st.title("📑B2B GJR Email Blast Application")
 hide_st = """
             <style>
@@ -58,8 +58,8 @@ def update_excel_status(df, email, status):
     df.loc[df['Email'] == email, 'STATUS'] = status
     return df
 
-def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_dict, body_text, output_update_function):
-    output_directory = 'Proposal Kerja Sama'
+def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_dict, body_text, output_update_function, feature):
+    output_directory = 'Proposal Kerja Sama' if feature == "Proposal" else 'Promotion'
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
@@ -124,6 +124,9 @@ for product in products:
             temp_template.write(template_path.read())
             template_dict[product] = temp_template.name
 
+# Select feature: Proposal or Promotion
+feature = st.selectbox("Select Feature", ["Proposal", "Promotion"])
+
 # Input for email body text
 default = """Salam,
 
@@ -145,4 +148,4 @@ Mail : Bimoagung27@gmail.com
 body_text = st.text_area("Enter Email Body Text", default)
 
 if st.button("Execute Mail Merge"):
-    merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_dict, body_text, st.empty())
+    merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_dict, body_text, st.empty(), feature)
