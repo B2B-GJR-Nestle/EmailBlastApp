@@ -130,8 +130,15 @@ if feature == "Proposal":
                 temp_template.write(template_path.read())
                 template_dict[product] = temp_template.name
 
+# Input for email subject text
+default_subject = "Proposal Penawaran Kerjasama PT Nestle Indonesia & {company_name}"
+subject_text = st.text_input("Enter Email Subject", default_subject)
+
 # Input for email body text
-default_body = """Salam,
+default_body = """Yth. Bapak/Ibu
+{company_name}
+di Tempat
+
 Semoga Bapak/Ibu keadaan baik. Saya mewakili tim PT. Nestlé Indonesia dengan senang hati ingin berbicara tentang peluang kerjasama program feeding karyawan yang dapat memberikan nilai tambah bagi perusahaan Anda.
 Sebagai salah satu perusahaan makanan dan minuman yang memiliki komitmen tinggi terhadap kualitas dan kesejahteraan, kami ingin menjalin kolaborasi dengan perusahaan Anda. Keunggulan kerjasama ini meliputi kontinuitas pasokan produk kami yang andal, serta diskon khusus sebagai bentuk apresiasi atas kerjasama yang baik.
 Untuk informasi lebih lanjut seputar produk listing dan harga, Anda dapat menemukannya dalam dokumen yang saya lampirkan. Kami sangat terbuka untuk berdiskusi lebih lanjut atau menjawab pertanyaan yang mungkin Anda miliki.
@@ -140,14 +147,9 @@ Salam,
 Bimo Agung Laksono
 B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia
 Phone: +6287776162577
-Mail : Bimoagung27@gmail.com
-"""
+Mail : Bimoagung27@gmail.com"""
 
-body_text = st.text_area("Enter Email Body Text", default_body)
-
-# Input for email subject text
-default_subject = "Proposal Penawaran Kerjasama PT Nestle Indonesia & {company_name} ({product})"
-subject_text = st.text_input("Enter Email Subject", default_subject)
+body_text = st.text_area("Enter Email Body Text", default_body,height=300)
 
 if st.button("Execute Mail Merge"):
     merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_path, body_text, subject_text, st.empty(), feature)
