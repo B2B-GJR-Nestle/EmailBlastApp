@@ -59,7 +59,7 @@ def update_excel_status(df, email, status):
     return df
 
 def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_dict, body_text, output_update_function):
-    output_directory = 'output_emails'
+    output_directory = 'Proposal Kerja Sama'
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
@@ -77,7 +77,7 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_dict,
 
         if product in template_dict:
             template = template_dict[product]
-            output_filename = f"{output_directory}Proposal_{row['Company Name']}_{product}.docx"
+            output_filename = f"{output_directory} Program Feeding {row['Company Name']}.docx"
             subject = f"Proposal Penawaran Kerjasama PT Nestle Indonesia & {row['Company Name']} ({product})"
             generate_document(template, output_filename, merge_data)
 
@@ -121,10 +121,9 @@ for product in products:
             template_dict[product] = temp_template.name
 
 # Input for email body text
-default = """
-Salam,
+default = """Salam,
 
-Semoga Bapak/Ibu keadaan baik. Saya mewakili tim Nestlé Indonesia dan dengan senang hati ingin berbicara tentang peluang kerjasama program feeding karyawan yang dapat memberikan nilai tambah bagi perusahaan Anda.
+Semoga Bapak/Ibu keadaan baik. Saya mewakili tim PT. Nestlé Indonesia dengan senang hati ingin berbicara tentang peluang kerjasama program feeding karyawan yang dapat memberikan nilai tambah bagi perusahaan Anda.
 
 Sebagai salah satu perusahaan makanan dan minuman yang memiliki komitmen tinggi terhadap kualitas dan kesejahteraan, kami ingin menjalin kolaborasi dengan perusahaan Anda. Keunggulan kerjasama ini meliputi kontinuitas pasokan produk kami yang andal, serta diskon khusus sebagai bentuk apresiasi atas kerjasama yang baik.
 
@@ -134,8 +133,10 @@ Terima kasih banyak untuk waktu dan perhatiannya. Kami berharap dapat menjalin k
 
 Salam,
 
-Bimo
-B2B Executive Greater Jakarta Region - Nestle Indonesia
+Bimo Agung Laksono
+B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia
+Phone: +6287776162577
+Mail : Bimoagung27@gmail.com
 """
 body_text = st.text_area("Enter Email Body Text", default)
 
