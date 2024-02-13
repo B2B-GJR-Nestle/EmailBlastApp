@@ -158,3 +158,28 @@ body_text = st.text_area("Enter Email Body Text", default_body, height=300)
 
 if st.button("Execute Mail Merge"):
     merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_path, body_text, subject_text, st.empty(), feature)
+import streamlit as st
+
+# About Us information
+about_text = """
+This Web-App is designed to facilitate B2B email blasts for PT Nestlé Indonesia.
+
+For any inquiries or assistance, please feel free to contact us:
+- Email: Ananda.Cahyo@id.nestle.com
+"""
+
+# Create a container for the navigation bar
+nav_container = st.beta_container()
+
+# Layout the content using columns
+with nav_container:
+    col1, col2 = st.beta_columns([8, 1])  # Adjust column widths as needed
+    col1.title("Your App Name")
+    col2.write("")  # Empty space for alignment
+    col2.write("👤 About Us")
+    col2.write("📧 Contact Us")
+
+# Display the about text in the main section of the app
+st.title("About Us")
+st.write(about_text)
+
