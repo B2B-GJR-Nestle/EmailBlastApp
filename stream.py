@@ -158,20 +158,4 @@ body_text = st.text_area("Enter Email Body Text", default_body, height=300)
 
 if st.button("Execute Mail Merge"):
     merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_path, body_text, subject_text, st.empty(), feature)
-import streamlit as st
-
-# About Us information
-about_text = """
-This Web-App is designed to facilitate B2B email blasts for PT  Indonesia made by Nestlé Management Trainee 2023 (Nestea Group)
-"""
-
-st.sidebar.title("Navigation")
-selection = st.sidebar.radio("", ["About Us", "Contact Us"])
-
-# Display the corresponding content based on the selection
-if selection == "About Us":
-    st.title("About Us")
-    st.write(about_text)
-elif selection == "Contact Us":
-    st.title("Contact Us")
-    st.write("For any inquiries or assistance, please feel free to reach us through Email: Ananda.Cahyo@id.nestle.com")
+st.sidebar.write("For any inquiries or assistance, please feel free to reach us through Email: Ananda.Cahyo@id.nestle.com")
