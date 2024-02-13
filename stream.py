@@ -162,24 +162,17 @@ import streamlit as st
 
 # About Us information
 about_text = """
-This Web-App is designed to facilitate B2B email blasts for PT Nestlé Indonesia.
-
-For any inquiries or assistance, please feel free to contact us:
-- Email: Ananda.Cahyo@id.nestle.com
+This Web-App is designed to facilitate B2B email blasts for PT  Indonesia made by Nestlé Management Trainee 2023 (Nestea Group)
 """
 
-# Create a container for the navigation bar
-nav_container = st.beta_container()
+st.sidebar.title("Navigation")
+selection = st.sidebar.radio("", ["About Us", "Contact Us"])
 
-# Layout the content using columns
-with nav_container:
-    col1, col2 = st.beta_columns([8, 1])  # Adjust column widths as needed
-    col1.title("Your App Name")
-    col2.write("")  # Empty space for alignment
-    col2.write("👤 About Us")
-    col2.write("📧 Contact Us")
-
-# Display the about text in the main section of the app
-st.title("About Us")
-st.write(about_text)
-
+# Display the corresponding content based on the selection
+if selection == "About Us":
+    st.title("About Us")
+    st.write(about_text)
+elif selection == "Contact Us":
+    st.title("Contact Us")
+    st.write("For any inquiries or assistance, please feel free to contact us:
+- Email: Ananda.Cahyo@id.nestle.com")
