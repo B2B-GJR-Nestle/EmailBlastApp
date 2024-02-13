@@ -174,5 +174,4 @@ if selection == "About Us":
     st.write(about_text)
 elif selection == "Contact Us":
     st.title("Contact Us")
-    st.write("For any inquiries or assistance, please feel free to contact us:
-- Email: Ananda.Cahyo@id.nestle.com")
+    st.write("For any inquiries or assistance, please feel free to reach us through Email: Ananda.Cahyo@id.nestle.com")
