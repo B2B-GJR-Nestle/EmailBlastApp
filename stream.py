@@ -90,7 +90,7 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path,
         generate_document(template, output_filename, merge_data)
         # Use the provided body_text or a default if none is provided
         email_body = body_text.format(CompanyName=row['Company Name'])
-        html_email_body = body_text.format(CompanyName=row['Company Name']) + """
+        html_email_body ="""
 <div style="text-align:left;">
     <b>Salam,</b><br>
     <span style="font-family:Arial; font-size:11pt; color:#645440; font-weight:bold;">Bimo Agung Laksono</span><br>
