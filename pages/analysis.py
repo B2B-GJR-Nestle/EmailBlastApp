@@ -61,3 +61,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+st.sidebar.image("Nestle_Signature.png")
+st.sidebar.write("This Web-App is designed to facilitate B2B email blasts for PT Nestlé Indonesia made by Nestlé Management Trainee 2023 (Nestea)", size=9)
+st.sidebar.write("For any inquiries or assistance, please feel free to reach us through Email: Ananda.Cahyo@id.nestle.com",size = 8)
