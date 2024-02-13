@@ -147,12 +147,13 @@ Untuk informasi lebih lanjut seputar produk listing dan harga, Anda dapat menemu
 
 Terima kasih banyak untuk waktu dan perhatiannya. Kami berharap dapat menjalin kerjasama yang baik dan saling menguntungkan.
 
-Salam,
-
-Bimo Agung Laksono
-B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia
-Phone: +6287776162577
-Mail : Bimoagung27@gmail.com"""
+Salam,<br>
+<span style="font-family:Arial; font-size:12pt; color:#645440; font-weight:bold;"></b>Bimo Agung Laksono</b></span><br>
+<span style="font-family:Arial; font-size:10pt;"><i>B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia<i></span><br>
+<span style="font-family:Arial; font-size:10pt;">Phone: <a href="tel:+6287776162577">+6287776162577</a></span><br>
+<span style="font-family:Arial; font-size:10pt;">Mail : <a href="mailto:Bimoagung27@gmail.com">Bimoagung27@gmail.com</a></span><br>
+<img src="Nestle_Signature.png" alt="Signature Image" style="width:100px;height:100px;">
+"""
 
 body_text = st.text_area("Enter Email Body Text", default_body, height=300)
 
