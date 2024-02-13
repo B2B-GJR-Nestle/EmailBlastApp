@@ -151,7 +151,6 @@ Salam,<br>
 <span style="font-family:Arial; font-size:12pt; color:#645440; font-weight:bold;"></b>Bimo Agung Laksono</b></span><br>
 <span style="font-family:Arial; font-size:10pt;"><i>B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia<i></span><br>
 <span style="font-family:Arial; font-size:10pt;">Phone: <a href="tel:+6287776162577">+6287776162577</a></span><br>
-<span style="font-family:Arial; font-size:10pt;">Mail : <a href="mailto:Bimoagung27@gmail.com">Bimoagung27@gmail.com</a></span><br>
 <img src="Nestle_Signature.png" alt="Signature Image" style="width:100px;height:100px;">
 """
 
