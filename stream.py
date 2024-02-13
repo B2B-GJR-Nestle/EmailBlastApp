@@ -91,13 +91,12 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path,
         # Use the provided body_text or a default if none is provided
         email_body = body_text.format(CompanyName=row['Company Name'])
         html_email_body = body_text.format(CompanyName=row['Company Name']) + """
-<div style="text-align:right;">
+<div style="text-align:left;">
     <b>Salam,</b><br>
-    <span style="font-family:Arial; font-size:12pt; color:#FF0000; font-weight:bold;">Bimo Agung Laksono</span><br>
-    <span style="font-family:Arial; font-size:10pt;">B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia</span><br>
-    <span style="font-family:Arial; font-size:10pt;">Phone: <a href="tel:+6287776162577">+6287776162577</a></span><br>
-    <span style="font-family:Arial; font-size:10pt;">Mail : <a href="mailto:Bimoagung27@gmail.com">Bimoagung27@gmail.com</a></span><br>
-    <img src="Nestle_Signature.png" alt="Signature Image" style="width:100px;height:100px;">
+    <span style="font-family:Arial; font-size:11pt; color:#645440; font-weight:bold;">Bimo Agung Laksono</span><br>
+    <span style="font-family:Arial; font-size:10pt;"><i>B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia<i></span><br>
+    <span style="font-family:Arial; font-size:10pt;">P:<a href="tel:+6287776162577">+6287776162577 | Mail : <a href="mailto:Bimoagung27@gmail.com">Bimoagung27@gmail.com</a></span><br>
+    <img src="https://github.com/B2B-GJR-Nestle/EmailBlastApp/blob/main/Nestle_Signature.png" alt="Signature Image" style="width:100px;height:100px;">
 </div>
 """
         send_email(subject, email_body, html_email_body, row['Email'], output_filename, gmail_user, gmail_password, output_update_function)
