@@ -36,16 +36,21 @@ def download_template_from_github(repo_url, template_path):
     else:
         st.error(f"Failed to download template from GitHub. Please check the URL: {template_url}")
 
-def send_email(subject, body, to_address, attachment_path, gmail_user, gmail_password, output_update_function):
+def send_email(subject, body, html_body, to_address, attachment_path, gmail_user, gmail_password, output_update_function):
     msg = MIMEMultipart()
     msg['Subject'] = subject
     msg['From'] = gmail_user
     msg['To'] = to_address
+    
+    # Attach both plaintext and HTML versions of the email body
+    msg.attach(MIMEText(body, 'plain'))
+    msg.attach(MIMEText(html_body, 'html'))
+
     with open(attachment_path, "rb") as attachment:
         part = MIMEApplication(attachment.read(), Name=os.path.basename(attachment_path))
         part['Content-Disposition'] = f'attachment; filename="{os.path.basename(attachment_path)}"'
         msg.attach(part)
-    msg.attach(MIMEText(body, 'plain'))
+        
     with smtplib.SMTP('smtp.gmail.com', 587) as server:
         server.starttls()
         server.login(gmail_user, gmail_password)
@@ -85,7 +90,17 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path,
         generate_document(template, output_filename, merge_data)
         # Use the provided body_text or a default if none is provided
         email_body = body_text.format(CompanyName=row['Company Name'])
-        send_email(subject, email_body, row['Email'], output_filename, gmail_user, gmail_password, output_update_function)
+        html_email_body = body_text.format(CompanyName=row['Company Name']) + """
+<div style="text-align:right;">
+    <b>Salam,</b><br>
+    <span style="font-family:Arial; font-size:12pt; color:#FF0000; font-weight:bold;">Bimo Agung Laksono</span><br>
+    <span style="font-family:Arial; font-size:10pt;">B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia</span><br>
+    <span style="font-family:Arial; font-size:10pt;">Phone: <a href="tel:+6287776162577">+6287776162577</a></span><br>
+    <span style="font-family:Arial; font-size:10pt;">Mail : <a href="mailto:Bimoagung27@gmail.com">Bimoagung27@gmail.com</a></span><br>
+    <img src="Nestle_Signature.png" alt="Signature Image" style="width:100px;height:100px;">
+</div>
+"""
+        send_email(subject, email_body, html_email_body, row['Email'], output_filename, gmail_user, gmail_password, output_update_function)
         excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
         placeholder.dataframe(excel_data)
 
@@ -117,12 +132,12 @@ template_dict = {}
 products = ["General", "BearBrand", "Nescafe"]  # Change the product sequence
 if feature == "Proposal":
     for product in products:
-        if product == "General":
-            st.write(f"## 🍫 {product}")
-        elif product == "BearBrand":
-            st.write(f"## 🥛 {product}")
-        else:
+        if product == "BearBrand":    
+            st.write(f"## 🥛{product}")
+        elif product == "Nescafe":    
             st.write(f"## ☕ {product}")
+        else:
+            st.write(f"## 🍫 {product}")
         template_path = st.file_uploader(f"Upload {product} Template", type=["docx","pdf"])
         if template_path:
             # Save the uploaded template to a temporary file
@@ -141,17 +156,11 @@ di Tempat
 
 Semoga Bapak/Ibu keadaan baik. Saya mewakili tim PT. Nestlé Indonesia dengan senang hati ingin berbicara tentang peluang kerjasama program feeding karyawan yang dapat memberikan nilai tambah bagi perusahaan Anda.
 
-Sebagai salah satu perusahaan makanan dan minuman yang memiliki komitmen tinggi terhadap kualitas dan kesejahteraan, kami ingin menjalin kolaborasi dengan perusahaan Anda. Keunggulan kerjasama ini meliputi kontinuitas pasokan produk kami yang andal, serta diskon khusus sebagai bentuk apresiasi atas kerjasama yang baik.
+Sebagai salah satu perusahaan makanan dan minuman yang memiliki komitmen tinggi terhadap kualitas dan kesejahteraan, <i>kami ingin menjalin kolaborasi dengan perusahaan Anda</i>. Keunggulan kerjasama ini meliputi kontinuitas pasokan produk kami yang andal, serta diskon khusus sebagai bentuk apresiasi atas kerjasama yang baik.
 
 Untuk informasi lebih lanjut seputar produk listing dan harga, Anda dapat menemukannya dalam dokumen yang saya lampirkan. Kami sangat terbuka untuk berdiskusi lebih lanjut atau menjawab pertanyaan yang mungkin Anda miliki.
 
 Terima kasih banyak untuk waktu dan perhatiannya. Kami berharap dapat menjalin kerjasama yang baik dan saling menguntungkan.
-
-Salam,<br>
-<span style="font-family:Arial; font-size:12pt; color:#645440; font-weight:bold;"></b>Bimo Agung Laksono</b></span><br>
-<span style="font-family:Arial; font-size:10pt;"><i>B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia<i></span><br>
-<span style="font-family:Arial; font-size:10pt;">Phone: <a href="tel:+6287776162577">+6287776162577</a></span><br>
-<img src="Nestle_Signature.png" alt="Signature Image" style="width:100px;height:100px;">
 """
 
 body_text = st.text_area("Enter Email Body Text", default_body, height=300)
