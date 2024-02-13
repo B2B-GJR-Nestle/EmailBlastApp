@@ -114,15 +114,15 @@ if feature == "Promotion":
 
 # Upload Word document templates for Proposal feature
 template_dict = {}
-products = ["BearBrand", "Nescafe", "Milo"]
+products = ["General", "BearBrand", "Nescafe"]  # Change the product sequence
 if feature == "Proposal":
     for product in products:
-        if product == "BearBrand":    
-            st.write(f"## 🥛{product}")
-        elif product == "Nescafe":    
-            st.write(f"## ☕ {product}")
-        else:
+        if product == "General":
             st.write(f"## 🍫 {product}")
+        elif product == "BearBrand":
+            st.write(f"## 🥛 {product}")
+        else:
+            st.write(f"## ☕ {product}")
         template_path = st.file_uploader(f"Upload {product} Template", type=["docx","pdf"])
         if template_path:
             # Save the uploaded template to a temporary file
