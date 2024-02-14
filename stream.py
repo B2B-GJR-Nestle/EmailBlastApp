@@ -1,10 +1,13 @@
 import streamlit as st
 import pandas as pd
 import os
+import requests
+from docxtpl import DocxTemplate
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
+import tempfile
 from PIL import Image
 
 img = Image.open('Nestle_Logo.png')
@@ -19,45 +22,59 @@ hide_st = """
             """
 st.markdown(hide_st, unsafe_allow_html=True)
 
-def send_email(subject, body, to_address, attachment_data, attachment_filename, gmail_user, gmail_password):
+def generate_document(template, output_path, data):
+    doc = DocxTemplate(template)
+    doc.render(data)
+    doc.save(output_path)
+
+def download_template_from_github(repo_url, template_path):
+    template_url = f"{repo_url}/blob/main/{template_path}"
+    response = requests.get(template_url)
+    if response.status_code == 200:
+        template_content = response.content
+        return template_content
+    else:
+        st.error(f"Failed to download template from GitHub. Please check the URL: {template_url}")
+
+def send_email(subject, body, to_address, attachment_path, gmail_user, gmail_password, output_update_function):
     msg = MIMEMultipart()
     msg['Subject'] = subject
     msg['From'] = gmail_user
     msg['To'] = to_address
-
-    part = MIMEApplication(attachment_data, Name=attachment_filename)
-    part['Content-Disposition'] = f'attachment; filename="{attachment_filename}"'
-    msg.attach(part)
-
+    with open(attachment_path, "rb") as attachment:
+        part = MIMEApplication(attachment.read(), Name=os.path.basename(attachment_path))
+        part['Content-Disposition'] = f'attachment; filename="{os.path.basename(attachment_path)}"'
+        msg.attach(part)
     msg.attach(MIMEText(body, 'plain'))
-
     with smtplib.SMTP('smtp.gmail.com', 587) as server:
         server.starttls()
         server.login(gmail_user, gmail_password)
         server.sendmail(gmail_user, to_address, msg.as_string())
 
-def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path, body_text, subject_text, feature):
+def update_excel_status(df, email, status):
+    df.loc[df['Email'] == email, 'STATUS'] = status
+    return df
+
+def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path, body_text, subject_text, output_update_function, feature):
     output_directory = 'Promotion'
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
-
+    placeholder = st.empty()
+    placeholder.dataframe(excel_data)
     for index, row in excel_data.iterrows():
         # Skip rows where the 'Email' column is empty
         if pd.isnull(row['Email']):
             continue
-
+        
         if feature == "Promotion":
-            if template_path:
-                attachment_data = template_path.getvalue()
-                attachment_filename = template_path.name
-                subject = subject_text.format(company_name=row['Company Name'])
-                email_body = body_text.format(CompanyName=row['Company Name'])
-                send_email(subject, email_body, row['Email'], attachment_data, attachment_filename, gmail_user, gmail_password)
-            else:
-                st.error("No attachment uploaded for this email.")
-                continue
+            # Use the provided body_text or a default if none is provided
+            email_body = body_text.format(CompanyName=row['Company Name'])
+            subject = subject_text.format(company_name=row['Company Name'])
+            attachment_path = template_path
+            send_email(subject, email_body, row['Email'], attachment_path, gmail_user, gmail_password, output_update_function)
+            excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
+            placeholder.dataframe(excel_data)
         else:
-            # For Proposal feature, generate document and attach
             merge_data = {
                 'RecipientName': row['CP'],
                 'Salutation': row['Salutation'],
@@ -73,7 +90,9 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path,
             subject = subject_text.format(company_name=row['Company Name'])
             generate_document(template, output_filename, merge_data)
             email_body = body_text.format(CompanyName=row['Company Name'])
-            send_email(subject, email_body, row['Email'], output_filename, gmail_user, gmail_password)
+            send_email(subject, email_body, row['Email'], output_filename, gmail_user, gmail_password, output_update_function)
+            excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
+            placeholder.dataframe(excel_data)
 
 # Streamlit app
 # Upload Excel or CSV file
@@ -100,6 +119,7 @@ if feature == "Promotion":
 
 # Upload Word document templates for Proposal feature
 template_dict = {}
+products = ["BearBrand", "Nescafe", "Milo"]
 products = ["General","BearBrand", "Nescafe"]
 if feature == "Proposal":
     for product in products:
@@ -142,6 +162,7 @@ Phone: +6287776162577 | Mail : Bimoagung27@gmail.com"""
 body_text = st.text_area("Enter Email Body Text", default_body, height=300)
 
 if st.button("Execute Mail Merge"):
-    merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_path, body_text, subject_text, feature)
+    merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_path, body_text, subject_text, st.empty(), feature)
 st.sidebar.image("Nestle_Signature.png")
-st.sidebar.write("This Web-App is designed to facilitate B2B email blasts for PT Nestlé")
+st.sidebar.write("This Web-App is designed to facilitate B2B email blasts for PT Nestlé Indonesia made by Nestlé Management Trainee 2023 (Nestea)", size=9)
+st.sidebar.write("For any inquiries, error handling, or assistance, please feel free to reach us through Email: Ananda.Cahyo@id.nestle.com",size = 8)
