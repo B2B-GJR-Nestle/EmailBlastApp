@@ -41,15 +41,37 @@ def send_email(subject, body, to_address, attachment_path, gmail_user, gmail_pas
     msg['Subject'] = subject
     msg['From'] = gmail_user
     msg['To'] = to_address
+            
     with open(attachment_path, "rb") as attachment:
         part = MIMEApplication(attachment.read(), Name=os.path.basename(attachment_path))
         part['Content-Disposition'] = f'attachment; filename="{os.path.basename(attachment_path)}"'
         msg.attach(part)
+                
     msg.attach(MIMEText(body, 'plain'))
     with smtplib.SMTP('smtp.gmail.com', 587) as server:
         server.starttls()
         server.login(gmail_user, gmail_password)
         server.sendmail(gmail_user, to_address, msg.as_string())
+                
+def send_email_promo(subject, body, to_address, attachment_path, gmail_user, gmail_password, output_update_function):
+    msg = MIMEMultipart()
+    msg['Subject'] = subject
+    msg['From'] = gmail_user
+    msg['To'] = to_address
+    
+    # Read the content of the file object and attach it to the email
+    attachment_data = attachment_path.getvalue()
+    attachment_filename = attachment_path.name
+    attachment_part = MIMEApplication(attachment_data, Name=attachment_filename)
+    attachment_part['Content-Disposition'] = f'attachment; filename="{attachment_filename}"'
+    msg.attach(attachment_part)
+    
+    msg.attach(MIMEText(body, 'plain'))
+    with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        server.starttls()
+        server.login(gmail_user, gmail_password)
+        server.sendmail(gmail_user, to_address, msg.as_string())
+
 
 def update_excel_status(df, email, status):
     df.loc[df['Email'] == email, 'STATUS'] = status
@@ -71,7 +93,7 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path,
             email_body = body_text.format(CompanyName=row['Company Name'])
             subject = subject_text.format(company_name=row['Company Name'])
             attachment_path = template_path
-            send_email(subject, email_body, row['Email'], attachment_path, gmail_user, gmail_password, output_update_function)
+            send_email_promo(subject, email_body, row['Email'], attachment_path, gmail_user, gmail_password, output_update_function)
             excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
             placeholder.dataframe(excel_data)
         else:
@@ -119,7 +141,6 @@ if feature == "Promotion":
 
 # Upload Word document templates for Proposal feature
 template_dict = {}
-products = ["BearBrand", "Nescafe", "Milo"]
 products = ["General","BearBrand", "Nescafe"]
 if feature == "Proposal":
     for product in products:
