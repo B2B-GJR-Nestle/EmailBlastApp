@@ -70,10 +70,16 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path,
             # Use the provided body_text or a default if none is provided
             email_body = body_text.format(CompanyName=row['Company Name'])
             subject = subject_text.format(company_name=row['Company Name'])
-            attachment_path = template_path.getvalue()  # Get the file object from the uploaded widget
-            send_email(subject, email_body, row['Email'], attachment_path, gmail_user, gmail_password, output_update_function)
-            excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
-            placeholder.dataframe(excel_data)
+            attachment_path = template_path  # Get the file object from the uploaded widget
+            if attachment_path:
+                attachment_data = attachment_path.getvalue()
+                attachment_filename = attachment_path.name
+                send_email(subject, email_body, row['Email'], attachment_data, attachment_filename, gmail_user, gmail_password)
+                excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
+                placeholder.dataframe(excel_data)
+            else:
+                st.error("No attachment uploaded for this email.")
+                continue
         else:
             merge_data = {
                 'RecipientName': row['CP'],
@@ -93,6 +99,7 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path,
             send_email(subject, email_body, row['Email'], output_filename, gmail_user, gmail_password, output_update_function)
             excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
             placeholder.dataframe(excel_data)
+
 
 # Streamlit app
 # Upload Excel or CSV file
