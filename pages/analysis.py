@@ -63,5 +63,5 @@ if __name__ == "__main__":
     main()
 
 st.sidebar.image("Nestle_Signature.png")
-st.sidebar.write("This Web-App is designed to facilitate B2B email blasts for PT Nestlé Indonesia made by Nestlé Management Trainee 2023 (Nestea)", size=9)
-st.sidebar.write("For any inquiries or assistance, please feel free to reach us through Email: Ananda.Cahyo@id.nestle.com",size = 8)
+st.sidebar.write("""<p style='font-size: 14px;'>This Web-App is designed to facilitate B2B executive to email blasts for PT Nestlé Indonesia Customer made by <b>Nestlé Management Trainee 2023<b> (Nestea)</p>""", unsafe_allow_html=True)
+st.sidebar.write("""<p style='font-size: 13px;'>For any inquiries, error handling, or assistance, please feel free to reach us through Email: <a href="mailto:Ananda.Cahyo@id.nestle.com">Ananda.Cahyo@id.nestle.com</a></p>""", unsafe_allow_html=True)
