@@ -66,28 +66,33 @@ def merge_and_send_emails(excel_data, gmail_user, gmail_password, template_path,
         if pd.isnull(row['Email']):
             continue
         
-        merge_data = {
-            'RecipientName': row['CP'],
-            'Salutation': row['Salutation'],
-            'CompanyName': row['Company Name'],
-        }
         if feature == "Promotion":
-            template = template_path
+            # Use the provided body_text or a default if none is provided
+            email_body = body_text.format(CompanyName=row['Company Name'])
+            subject = subject_text.format(company_name=row['Company Name'])
+            attachment_path = template_path
+            send_email(subject, email_body, row['Email'], attachment_path, gmail_user, gmail_password, output_update_function)
+            excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
+            placeholder.dataframe(excel_data)
         else:
+            merge_data = {
+                'RecipientName': row['CP'],
+                'Salutation': row['Salutation'],
+                'CompanyName': row['Company Name'],
+            }
             product = row['Product']
             if product in template_dict:
                 template = template_dict[product]
             else:
                 st.error(f"No template found for product: {product}")
                 continue
-        output_filename = f"{output_directory} Program Feeding {row['Company Name']}.docx"
-        subject = subject_text.format(company_name=row['Company Name'])
-        generate_document(template, output_filename, merge_data)
-        # Use the provided body_text or a default if none is provided
-        email_body = body_text.format(CompanyName=row['Company Name'])
-        send_email(subject, email_body, row['Email'], output_filename, gmail_user, gmail_password, output_update_function)
-        excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
-        placeholder.dataframe(excel_data)
+            output_filename = f"{output_directory} Program Feeding {row['Company Name']}.docx"
+            subject = subject_text.format(company_name=row['Company Name'])
+            generate_document(template, output_filename, merge_data)
+            email_body = body_text.format(CompanyName=row['Company Name'])
+            send_email(subject, email_body, row['Email'], output_filename, gmail_user, gmail_password, output_update_function)
+            excel_data = update_excel_status(excel_data, row['Email'], 'Sent')
+            placeholder.dataframe(excel_data)
 
 # Streamlit app
 # Upload Excel or CSV file
