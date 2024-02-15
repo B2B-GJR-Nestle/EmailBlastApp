@@ -9,6 +9,7 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 import tempfile
 from PIL import Image
+import markdown
 
 img = Image.open('Nestle_Logo.png')
 st.set_page_config(page_title='B2B Email Blast App', page_icon=img)
@@ -195,7 +196,7 @@ signature_html = f"""
         </p>
         <p class="MsoNormal" style="line-height:150%"><i><img data-aii="CiExc3VFYjVEbmdHeDV1Y1M2dXdZaEJXRjJsZVJtSlNsUGM" width="200" height="76" src="https://ci3.googleusercontent.com/mail-sig/AIorK4whyjOuxfby2z1qTcxU9Td5SHF9U3f3bhi1MBzDtSEGlVxMmF9bp7U_LkApFHMQ0qWediWiDoA" data-os="https://lh3.googleusercontent.com/d/1suEb5DngGx5ucS6uwYhBWF2leRmJSlPc"></i><br></p>
     """
-body_text = f"{body_text}<br><br>{signature_html}"
+body_text = f"{markdown.markdown(body_text)}<br><br>{signature_html}"
 if st.button("Execute Mail Merge"):
     merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_path, body_text, subject_text, st.empty(), feature)
 st.sidebar.image("Nestle_Signature.png")
