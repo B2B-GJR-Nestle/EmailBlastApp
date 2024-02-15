@@ -47,7 +47,7 @@ def send_email(subject, body, to_address, attachment_path, gmail_user, gmail_pas
         part['Content-Disposition'] = f'attachment; filename="{os.path.basename(attachment_path)}"'
         msg.attach(part)
                 
-    msg.attach(MIMEText(body, 'plain'))
+    msg.attach(MIMEText(body, 'html'))
     with smtplib.SMTP('smtp.gmail.com', 587) as server:
         server.starttls()
         server.login(gmail_user, gmail_password)
@@ -66,7 +66,7 @@ def send_email_promo(subject, body, to_address, attachment_path, gmail_user, gma
     attachment_part['Content-Disposition'] = f'attachment; filename="{attachment_filename}"'
     msg.attach(attachment_part)
     
-    msg.attach(MIMEText(body, 'plain'))
+    msg.attach(MIMEText(body, 'html'))
     with smtplib.SMTP('smtp.gmail.com', 587) as server:
         server.starttls()
         server.login(gmail_user, gmail_password)
@@ -175,13 +175,27 @@ Untuk informasi lebih lanjut seputar produk listing dan harga, Anda dapat menemu
 Terima kasih banyak untuk waktu dan perhatiannya. Kami berharap dapat menjalin kerjasama yang baik dan saling menguntungkan.
 
 Salam,
-
-Bimo Agung Laksono
-B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia
-Phone: +6287776162577 | Mail : Bimoagung27@gmail.com"""
-
+"""
 body_text = st.text_area("Enter Email Body Text", default_body, height=300)
 
+# Input for signature
+default_name = "Bimo Agung Laksono"
+default_phone = "+6287776162577"
+name = st.text_input("Enter B2B executive name", default_name)
+phone = st.text_input("Enter B2B executive name", default_phone)
+signature_html = f"""
+        <p dir="ltr" style="line-height:1.38;margin-top:0pt;margin-bottom:0pt">
+            <span style="font-size: 11pt; font-family: Arial, sans-serif; color: rgb(99, 81, 61); background-color: transparent; font-weight: 700; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">{name}</span>
+        </p>
+        <p dir="ltr" style="line-height:1.38;margin-top:0pt;margin-bottom:0pt">
+            <span style="font-size: 11pt; font-family: Arial, sans-serif; color: rgb(99, 81, 61); background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"><i>B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia</i></span>
+        </p>
+        <p dir="ltr" style="line-height:1.38;margin-top:0pt;margin-bottom:0pt">
+            <span style="font-size: 11pt; font-family: Arial, sans-serif; color: rgb(32, 33, 36); background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"><i>Phone: {phone} </a></i></span>
+        </p>
+        <p class="MsoNormal" style="line-height:150%"><i><img data-aii="CiExc3VFYjVEbmdHeDV1Y1M2dXdZaEJXRjJsZVJtSlNsUGM" width="200" height="76" src="https://ci3.googleusercontent.com/mail-sig/AIorK4whyjOuxfby2z1qTcxU9Td5SHF9U3f3bhi1MBzDtSEGlVxMmF9bp7U_LkApFHMQ0qWediWiDoA" data-os="https://lh3.googleusercontent.com/d/1suEb5DngGx5ucS6uwYhBWF2leRmJSlPc"></i><br></p>
+    """
+body_text = f"{body_text}<br><br>{signature_html}"
 if st.button("Execute Mail Merge"):
     merge_and_send_emails(excel_data, "b2b.gjr.nestle@gmail.com", "alks kzuv wczc efch", template_path, body_text, subject_text, st.empty(), feature)
 st.sidebar.image("Nestle_Signature.png")
