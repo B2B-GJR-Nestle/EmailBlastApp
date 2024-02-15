@@ -7,3 +7,4 @@ pydrive
 plotly
 plotly-express
 docx2pdf
+markdown
