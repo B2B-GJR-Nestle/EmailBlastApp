@@ -186,13 +186,13 @@ name = st.text_input("Enter B2B executive name", default_name)
 phone = st.text_input("Enter B2B executive name", default_phone)
 signature_html = f"""
         <p dir="ltr" style="line-height:1.38;margin-top:0pt;margin-bottom:0pt">
-            <span style="font-size: 11pt; font-family: Arial, sans-serif; color: rgb(99, 81, 61); background-color: transparent; font-weight: 700; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">{name}</span>
+            <span style="font-size: 10pt; font-family: Arial, sans-serif; color: rgb(99, 81, 61); background-color: transparent; font-weight: 700; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">{name}</span>
         </p>
         <p dir="ltr" style="line-height:1.38;margin-top:0pt;margin-bottom:0pt">
-            <span style="font-size: 11pt; font-family: Arial, sans-serif; color: rgb(99, 81, 61); background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"><i>B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia</i></span>
+            <span style="font-size: 10pt; font-family: Arial, sans-serif; color: rgb(99, 81, 61); background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"><i>B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia</i></span>
         </p>
         <p dir="ltr" style="line-height:1.38;margin-top:0pt;margin-bottom:0pt">
-            <span style="font-size: 11pt; font-family: Arial, sans-serif; color: rgb(32, 33, 36); background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"><i>Phone: {phone} </a></i></span>
+            <span style="font-size: 10pt; font-family: Arial, sans-serif; color: rgb(32, 33, 36); background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"><i>Phone: {phone} </a></i></span>
         </p>
         <p class="MsoNormal" style="line-height:150%"><i><img data-aii="CiExc3VFYjVEbmdHeDV1Y1M2dXdZaEJXRjJsZVJtSlNsUGM" width="200" height="76" src="https://ci3.googleusercontent.com/mail-sig/AIorK4whyjOuxfby2z1qTcxU9Td5SHF9U3f3bhi1MBzDtSEGlVxMmF9bp7U_LkApFHMQ0qWediWiDoA" data-os="https://lh3.googleusercontent.com/d/1suEb5DngGx5ucS6uwYhBWF2leRmJSlPc"></i><br></p>
     """
