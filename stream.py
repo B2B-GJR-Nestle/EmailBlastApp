@@ -163,11 +163,11 @@ default_subject = "Proposal Penawaran Kerjasama PT Nestle Indonesia & {company_n
 subject_text = st.text_input("Enter Email Subject", default_subject)
 
 # Input for email body text
-default_body = """Yth. Bapak/Ibu
-{CompanyName},
-di Tempat
+default_body = """Yth. Bapak/Ibu <br>
+{CompanyName},<br>
+di Tempat<br>
 
-Semoga Bapak/Ibu keadaan baik. Saya mewakili tim PT. Nestlé Indonesia dengan senang hati ingin berbicara tentang peluang kerjasama program feeding karyawan yang dapat memberikan nilai tambah bagi perusahaan Anda.
+Semoga Bapak/Ibu keadaan baik. Saya mewakili tim PT. Nestlé Indonesia dengan senang hati ingin berbicara tentang peluang kerjasama yang dapat memberikan nilai tambah bagi perusahaan Anda.
 
 Sebagai salah satu perusahaan makanan dan minuman yang memiliki komitmen tinggi terhadap kualitas dan kesejahteraan, kami ingin menjalin kolaborasi dengan perusahaan Anda. Keunggulan kerjasama ini meliputi kontinuitas pasokan produk kami yang andal, serta diskon khusus sebagai bentuk apresiasi atas kerjasama yang baik.
 
@@ -186,7 +186,7 @@ name = st.text_input("Enter B2B executive name", default_name)
 phone = st.text_input("Enter B2B executive name", default_phone)
 signature_html = f"""
         <p dir="ltr" style="line-height:1.38;margin-top:0pt;margin-bottom:0pt">
-            <span style="font-size: 10pt; font-family: Arial, sans-serif; color: rgb(99, 81, 61); background-color: transparent; font-weight: 700; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">{name}</span>
+            <span style="font-size: 11pt; font-family: Arial, sans-serif; color: rgb(99, 81, 61); background-color: transparent; font-weight: 700; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">{name}</span>
         </p>
         <p dir="ltr" style="line-height:1.38;margin-top:0pt;margin-bottom:0pt">
             <span style="font-size: 10pt; font-family: Arial, sans-serif; color: rgb(99, 81, 61); background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;"><i>B2B Executive, Greater Jakarta Region - PT Nestlé Indonesia</i></span>
