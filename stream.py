@@ -12,8 +12,8 @@ from PIL import Image
 import markdown
 
 img = Image.open('Nestle_Logo.png')
-st.set_page_config(page_title='B2B Email Blast App', page_icon=img)
-st.title("📑B2B GJR Email Blast Application")
+st.set_page_config(page_title='Nestorm B2B', page_icon=img)
+st.title("📑Nestorm: Nestlé Email Blast Outreach and Marketing")
 
 hide_st = """
             <style>
